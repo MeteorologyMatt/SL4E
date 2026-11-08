@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#edf3f7">
+  <meta name="description" content="A personal Python practice game for learning loops, one small weather challenge at a time.">
+  <title>Loop Lab · Python practice</title>
+  <style>
+    :root { color-scheme: light; --bg:#edf3f7; --paper:#fff; --ink:#182d40; --muted:#526777; --line:#d9e4ec; --blue:#155bcb; --pale:#eaf2ff; --green:#17664a; --code:#142638; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.6 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    button,textarea,select { font:inherit; }
+    button,select { cursor:pointer; }
+    button { border:1px solid transparent; border-radius:10px; padding:11px 17px; font-weight:650; transition:background .15s; }
+    button:disabled { cursor:default; opacity:.5; }
+    button:focus-visible,textarea:focus-visible,select:focus-visible,a:focus-visible { outline:3px solid #e49a25; outline-offset:4px; }
+    [hidden] { display:none!important; }
+    .wrap { max-width:1170px; margin:auto; padding:28px 30px 50px; }
+    header { display:flex; justify-content:space-between; align-items:center; gap:16px; padding-bottom:24px; border-bottom:1px solid var(--line); }
+    .brand { display:flex; align-items:center; gap:12px; }
+    .mark { display:grid; place-items:center; width:43px; height:43px; border-radius:13px; background:var(--ink); color:#8edace; font:700 23px ui-monospace,monospace; }
+    .brand-name { font-size:21px; font-weight:780; letter-spacing:-.7px; }
+    .brand-sub { font-size:12px; color:var(--muted); line-height:1.3; }
+    .tag { font-size:12px; color:var(--muted); border:1px solid #c7d6e1; border-radius:30px; padding:5px 12px; }
+    .intro { display:flex; justify-content:space-between; align-items:flex-end; gap:25px; margin:30px 0 26px; }
+    .eyebrow { font-size:11px; font-weight:800; letter-spacing:1.6px; text-transform:uppercase; color:var(--blue); }
+    h1 { font-size:clamp(27px,4vw,38px); line-height:1.2; letter-spacing:-1.3px; margin:8px 0; }
+    .intro p { margin:0; color:var(--muted); font-size:14px; }
+    .totals { display:flex; gap:26px; flex-shrink:0; }
+    .stat strong { display:block; font-size:24px; line-height:1.25; letter-spacing:-.7px; }
+    .stat span { color:var(--muted); font-size:11px; }
+    .layout { display:grid; grid-template-columns:235px minmax(0,1fr); gap:25px; align-items:start; }
+    .sidebar { padding-top:3px; }
+    .side-title { font-size:11px; letter-spacing:1.3px; text-transform:uppercase; font-weight:750; color:var(--muted); margin:0 0 12px 8px; }
+    .module { width:100%; text-align:left; display:flex; align-items:center; gap:10px; background:transparent; color:var(--muted); padding:12px 10px; margin-bottom:4px; }
+    .module:hover { background:#e1eaf2; }
+    .module.active { color:#164e9c; background:#dce9fc; }
+    .module-number { display:grid; place-items:center; height:28px; width:28px; flex-shrink:0; font:12px ui-monospace,monospace; border:1px solid #c2d2df; border-radius:8px; }
+    .module-label { flex:1; font-size:13px; }
+    .module-count { font-size:11px; font-weight:500; white-space:nowrap; }
+    .side-note { margin-top:22px; padding:15px; border:1px solid #cfdee8; border-radius:12px; }
+    .side-note strong { font-size:12px; }
+    .side-note p { font-size:12px; color:var(--muted); margin:6px 0 0; }
+    .mobile-nav { display:none; }
+    .card { border:1px solid var(--line); border-radius:18px; background:var(--paper); overflow:hidden; box-shadow:0 8px 30px #20374905; }
+    .card-top { padding:20px 26px 17px; border-bottom:1px solid var(--line); }
+    .row { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    .lesson { font-size:12px; font-weight:700; color:var(--muted); }
+    .pill { display:inline-block; font-size:11px; font-weight:650; padding:3px 9px; border-radius:6px; background:var(--pale); color:var(--blue); }
+    #position { font-size:12px; color:var(--muted); }
+    progress { width:100%; height:5px; display:block; margin-top:14px; border:0; border-radius:8px; overflow:hidden; background:#e7eef4; accent-color:var(--blue); }
+    progress::-webkit-progress-bar { background:#e7eef4; }
+    progress::-webkit-progress-value { background:var(--blue); border-radius:8px; }
+    progress::-moz-progress-bar { background:var(--blue); }
+    .card-body { padding:23px 26px 27px; }
+    h2 { margin:9px 0 7px; font-size:24px; line-height:1.3; letter-spacing:-.6px; }
+    .prompt { color:var(--muted); font-size:14px; margin:0 0 20px; }
+    .code-wrap { border-radius:12px; overflow:hidden; background:var(--code); margin-bottom:22px; }
+    .code-header { padding:9px 16px; border-bottom:1px solid #ffffff13; color:#b0c8db; font:11px ui-monospace,monospace; display:flex; justify-content:space-between; }
+    pre { margin:0; padding:19px 18px; overflow-x:auto; color:#e2edf6; font:14px/1.9 ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace; tab-size:4; }
+    code { font-family:ui-monospace,SFMono-Regular,Consolas,monospace; }
+    .kw { color:#d9abff; } .num { color:#ffc88a; } .str { color:#a6dec1; } .comment { color:#94acc0; }
+    label.answer-label { font-size:13px; font-weight:700; display:block; margin-bottom:8px; }
+    textarea { display:block; width:100%; resize:vertical; min-height:87px; border:1px solid #b6c8d7; border-radius:10px; background:#fbfdff; color:var(--ink); padding:12px 14px; font:14px/1.6 ui-monospace,monospace; }
+    textarea:disabled { background:#f0f4f7; }
+    .input-note { color:var(--muted); font-size:11px; margin:7px 0 17px; }
+    .actions { display:flex; gap:9px; align-items:center; flex-wrap:wrap; }
+    .primary { background:var(--blue); color:white; }
+    .primary:hover:not(:disabled) { background:#104da9; }
+    .secondary { background:white; border-color:#c8d7e3; color:var(--ink); }
+    .secondary:hover:not(:disabled) { background:#f1f6fa; }
+    .quiet { color:var(--muted); background:transparent; font-size:12px; padding:8px; }
+    .actions .quiet { margin-left:auto; }
+    .hint { background:#fff8e8; border:1px solid #ebd7a8; border-radius:10px; padding:13px 15px; font-size:13px; margin:16px 0 0; color:#6d5015; }
+    .feedback { margin-top:17px; padding:16px; border:1px solid #ccdae6; border-radius:12px; font-size:13px; background:#f4f8fc; }
+    .feedback.good { border-color:#acd3bf; background:#eff9f3; }
+    .feedback.wrong { border-color:#e6c2b3; background:#fff5ef; }
+    .feedback strong { display:block; font-size:14px; }
+    .feedback p { margin:5px 0 0; }
+    .feedback pre { padding:10px 12px; background:#fff9; color:var(--ink); border:1px solid #ccd9d4; border-radius:8px; font-size:13px; margin-top:9px; line-height:1.6; }
+    details { margin-top:12px; }
+    summary { cursor:pointer; color:#234f6a; font-size:12px; font-weight:700; }
+    .steps { padding-left:23px; margin:10px 0 0; }
+    .steps li { padding:3px 0; }
+    .card-bottom { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:14px 26px; border-top:1px solid var(--line); background:#fbfcfe; }
+    .card-bottom span { font-size:11px; color:var(--muted); }
+    .card-bottom button { padding:8px 14px; font-size:13px; }
+    .reference { display:flex; gap:13px; align-items:flex-start; border:1px solid var(--line); border-radius:12px; padding:15px 19px; margin-top:17px; background:#f5f9fc; }
+    .reference .symbol { color:var(--blue); font:700 17px ui-monospace,monospace; }
+    .reference strong { font-size:12px; }
+    .reference p { margin:3px 0 0; color:var(--muted); font-size:12px; }
+    footer { display:flex; align-items:center; justify-content:space-between; gap:16px; color:var(--muted); margin-top:25px; font-size:11px; }
+    .empty { padding:35px 26px; }
+    .empty p { color:var(--muted); font-size:14px; }
+    .reset-confirm { padding:12px 16px; margin-top:12px; border-radius:10px; border:1px solid #d6c7b9; background:#fff9f2; display:flex; align-items:center; gap:12px; flex-wrap:wrap; font-size:12px; }
+    @media (max-width:790px) {
+      .wrap { padding:20px 18px 30px; } .layout { grid-template-columns:1fr; gap:14px; }
+      .sidebar { display:none; } .mobile-nav { display:block; }
+      .mobile-nav label { display:block; font-size:12px; font-weight:650; margin-bottom:5px; }
+      select { width:100%; padding:10px; border:1px solid #b9cdda; border-radius:9px; background:white; color:var(--ink); }
+      .intro { margin:25px 0 20px; gap:15px; } .totals { gap:15px; } .stat strong { font-size:21px; }
+    }
+    @media (max-width:450px) {
+      header .tag { display:none; } .intro { align-items:flex-start; flex-direction:column; gap:16px; }
+      .totals { width:100%; gap:35px; } .stat strong { display:inline; margin-right:5px; font-size:20px; }
+      .card-top { padding:16px 18px; } .card-body { padding:19px 18px; } .card-bottom { padding:13px 18px; }
+      pre { font-size:12px; padding:15px 12px; } h2 { font-size:22px; }
+      .actions button { padding:10px 13px; } .actions .quiet { margin-left:0; }
+      footer { align-items:flex-start; flex-direction:column; gap:3px; } .reference { padding:13px 15px; }
+    }
+    @media (prefers-reduced-motion:reduce) { * { transition:none!important; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand"><div class="mark" aria-hidden="true">↻</div><div><div class="brand-name">Loop Lab</div><div class="brand-sub">Your Python practice space</div></div></div>
+      <div class="tag">Small challenges. Steady progress.</div>
+    </header>
+    <section class="intro" aria-label="Your progress">
+      <div><div class="eyebrow">A little practice goes a long way</div><h1>Get back into the loop.</h1><p>Learn Python with weather, stations, and a few good loops.</p></div>
+      <div class="totals"><div class="stat"><strong id="solved-count">0 / 25</strong><span>Solved</span></div><div class="stat"><strong id="review-count">0</strong><span>To revisit</span></div></div>
+    </section>
+    <div class="layout">
+      <aside class="sidebar" aria-label="Practice modules">
+        <p class="side-title">Your learning path</p><nav id="modules"></nav>
+        <div class="side-note"><strong>Aim for understanding.</strong><p>No timer. No lost lives. Follow one loop iteration at a time, and use a hint whenever you need one.</p></div>
+      </aside>
+      <main>
+        <div class="mobile-nav"><label for="module-select">Choose a practice module</label><select id="module-select"></select></div>
+        <article class="card" id="exercise">
+          <div class="card-top"><div class="row"><span class="lesson" id="lesson">01 · For loops</span><span id="position">Challenge 1 of 5</span></div><progress id="module-progress" value="0" max="5" aria-label="Solved in this module"></progress></div>
+          <div class="card-body">
+            <span class="pill" id="question-kind">Predict the output</span><h2 id="question-title">Meet the loop</h2><p class="prompt" id="prompt"></p>
+            <div class="code-wrap"><div class="code-header"><span>challenge.py</span><span>PYTHON 3</span></div><pre><code id="code"></code></pre></div>
+            <form id="answer-form" novalidate>
+              <label class="answer-label" id="answer-label" for="answer">What does this print?</label>
+              <textarea id="answer" rows="3" spellcheck="false" autocomplete="off" autocapitalize="off" aria-describedby="input-note"></textarea>
+              <p class="input-note" id="input-note">Put each printed value on its own line. Ctrl/⌘ + Enter checks your answer.</p>
+              <div class="actions"><button class="primary" id="check" type="submit">Check answer</button><button class="secondary" id="hint-button" type="button" aria-expanded="false" aria-controls="hint">Get a hint</button><button class="quiet" id="reveal-button" type="button">Show answer</button></div>
+            </form>
+            <div class="hint" id="hint" hidden></div>
+            <div class="feedback" id="feedback" role="status" aria-live="polite" hidden></div>
+          </div>
+          <div class="card-bottom"><button class="secondary" id="previous" type="button">← Previous</button><span id="saved-status">Progress saves on this browser.</span><button class="secondary" id="next" type="button">Next →</button></div>
+        </article>
+        <section class="card empty" id="empty" hidden><div class="eyebrow" id="empty-eyebrow">Review queue</div><h2 id="empty-title">Nothing to revisit yet.</h2><p id="empty-message">Missed questions and revealed answers will appear here. Practice any module to get started.</p><button class="primary" id="back-to-loops" type="button">Practice for loops</button></section>
+        <aside class="reference" aria-label="Quick reference"><span class="symbol" aria-hidden="true">i</span><div><strong id="reference-title">The shape of a for loop</strong><p id="reference-text"></p></div></aside>
+      </main>
+    </div>
+    <footer><span>Prepared Python exercises · This version checks answers; it does not run Python.</span><button class="quiet" id="reset-button" type="button" aria-expanded="false" aria-controls="reset-confirm">Reset progress</button></footer>
+    <div class="reset-confirm" id="reset-confirm" hidden><span>Clear your solved questions and review queue on this browser?</span><button class="secondary" id="cancel-reset" type="button">Keep progress</button><button class="primary" id="confirm-reset" type="button">Clear progress</button></div>
+    <noscript><p>This game needs JavaScript enabled to display challenges and check answers.</p></noscript>
+  </div>
+  <script>
+    'use strict';
+
+    // EDIT HERE: Add questions to a module. No Python installation is needed.
+    // "answers" lists accepted responses. "steps" explains the loop after a solution.
+    const modules = [
+      { id:'loops', name:'For loops', reference:'A for loop repeats its indented body once for each item. Read the body from top to bottom, then move to the next item.', questions:[
+        { id:'l1', title:'Meet the loop', prompt:'The indented line runs once for every station. Write the complete output.', code:'for station in ["LIT", "MEM", "BNA"]:\n    print(station)', answers:['LIT\nMEM\nBNA'], hint:'station becomes "LIT", then "MEM", then "BNA". Each print starts a new line.', explanation:'The loop assigns each station name to station and prints it. You do not include quotation marks in the printed output.', steps:['station = "LIT" → prints LIT','station = "MEM" → prints MEM','station = "BNA" → prints BNA'] },
+        { id:'l2', title:'Start at zero', prompt:'Predict every value this loop prints.', code:'for hour in range(3):\n    print(hour)', answers:['0\n1\n2'], hint:'range(3) starts at 0 and stops before 3.', explanation:'range(3) gives 0, 1, and 2. There are three iterations, even though the final value is 2.', steps:['hour = 0 → prints 0','hour = 1 → prints 1','hour = 2 → prints 2'] },
+        { id:'l3', title:'One reading at a time', prompt:'A list holds three temperature readings. What prints?', code:'temperatures = [28, 35, 30]\nfor temp in temperatures:\n    print(temp + 2)', answers:['30\n37\n32'], hint:'Add 2 to each item separately. The list itself does not change.', explanation:'temp takes each original reading. print(temp + 2) displays a new number on each iteration.', steps:['temp = 28 → 28 + 2 = 30','temp = 35 → 35 + 2 = 37','temp = 30 → 30 + 2 = 32'] },
+        { id:'l4', title:'Inside or outside?', prompt:'Watch the indentation. How many lines appear, and what are they?', code:'for hour in range(3):\n    print("Checking")\nprint("Done")', answers:['Checking\nChecking\nChecking\nDone'], hint:'Checking is inside the loop. Done is outside it.', explanation:'Only the indented print repeats. The final print runs once, after all three iterations.', steps:['hour = 0 → prints Checking','hour = 1 → prints Checking','hour = 2 → prints Checking','Loop ends → prints Done'] },
+        { id:'l5', title:'Count the passes', prompt:'The counter starts before the loop. What is its final printed value?', code:'count = 0\nfor hour in range(4):\n    count += 1\nprint(count)', answers:['4'], hint:'count += 1 means count = count + 1. There are four iterations.', explanation:'The counter increases once for each of the four values in range(4). Only the final counter is printed.', steps:['Start: count = 0','hour = 0 → count = 1','hour = 1 → count = 2','hour = 2 → count = 3','hour = 3 → count = 4'] }
+      ]},
+      { id:'range', name:'Working with range()', reference:'range(start, stop, step) includes start and excludes stop. With one argument, start is 0; the default step is 1.', questions:[
+        { id:'r1', title:'Where does it stop?', prompt:'Write the values printed by this range.', code:'for hour in range(1, 4):\n    print(hour)', answers:['1\n2\n3'], hint:'Start at 1. Stop before 4.', explanation:'The stop value is excluded, so this loop prints 1, 2, and 3.', steps:['Start at 1 → print 1','Add 1 → print 2','Add 1 → print 3','Next value would be 4 → stop'] },
+        { id:'r2', title:'Every other hour', prompt:'The third argument changes the step. What prints?', code:'for hour in range(0, 7, 2):\n    print(hour)', answers:['0\n2\n4\n6'], hint:'Begin at 0, add 2 each time, and stay below 7.', explanation:'A step of 2 produces 0, 2, 4, and 6. The next value, 8, is past the stop.', steps:['hour = 0','hour = 2','hour = 4','hour = 6'] },
+        { id:'r3', title:'Count down', prompt:'Follow the negative step and predict the output.', code:'for countdown in range(3, 0, -1):\n    print(countdown)', answers:['3\n2\n1'], hint:'Subtract 1 each time. The stop value, 0, is excluded.', explanation:'The loop starts at 3 and counts down to 1. With a negative step, it stops before reaching or passing the lower stop value.', steps:['countdown = 3','countdown = 2','countdown = 1','Next value would be 0 → stop'] },
+        { id:'r4', type:'blank', title:'Build the range', prompt:'Replace ____ with a range() call so the loop prints 0, 1, 2, 3, and 4, each on its own line.', code:'for hour in ____:\n    print(hour)', answers:['range(5)','range(0, 5)','range(0, 5, 1)'], hint:'The stop must be one larger than the final value you want.', explanation:'range(5) creates five integers starting at zero: 0 through 4.', steps:['Default start: 0','Default step: 1','Stop: 5, excluded'] },
+        { id:'r5', title:'A range that never starts', prompt:'What is the final value of checks? Follow the default step carefully.', code:'checks = 0\nfor hour in range(3, 0):\n    checks += 1\nprint(checks)', answers:['0'], hint:'Without a third argument, the step is +1. Can you go from 3 toward 0 by adding 1?', explanation:'range(3, 0) is empty because the default positive step cannot move from 3 toward a lower stop. The loop body never runs.', steps:['checks starts at 0','range(3, 0) produces no values','The body is skipped → prints 0'] }
+      ]},
+      { id:'lists', name:'Lists & counters', reference:'Initialize totals or result lists before the loop. Update them inside the loop, then use the result after the loop.', questions:[
+        { id:'a1', title:'Add the rainfall', prompt:'The readings are in millimeters. What total prints?', code:'rainfall = [2, 0, 3]\ntotal = 0\nfor amount in rainfall:\n    total += amount\nprint(total)', answers:['5'], hint:'Track total after adding 2, then 0, then 3.', explanation:'The accumulator keeps its value between iterations. The final total is 2 + 0 + 3 = 5.', steps:['Start: total = 0','amount = 2 → total = 2','amount = 0 → total = 2','amount = 3 → total = 5'] },
+        { id:'a2', type:'blank', title:'Keep each reading', prompt:'Replace ____ with the list method call that adds temp to readings. Enter only the missing part after the dot.', code:'readings = []\nfor temp in [28, 30, 32]:\n    readings.____\nprint(readings)', answers:['append(temp)'], hint:'The list method that adds one item to the end is append().', explanation:'readings.append(temp) adds the current temperature. The result is [28, 30, 32].', steps:['Start: readings = []','Append 28 → [28]','Append 30 → [28, 30]','Append 32 → [28, 30, 32]'] },
+        { id:'a3', title:'Use the index', prompt:'Python list positions start at zero. What prints on each line?', code:'stations = ["LIT", "MEM", "BNA"]\nfor i in range(len(stations)):\n    print(i, stations[i])', answers:['0 LIT\n1 MEM\n2 BNA'], hint:'len(stations) is 3. print(i, stations[i]) puts a space between the two values.', explanation:'i is the list index. stations[i] retrieves the station at that position.', steps:['i = 0 → stations[0] is LIT','i = 1 → stations[1] is MEM','i = 2 → stations[2] is BNA'] },
+        { id:'a4', title:'A counter that resets', prompt:'This code has a counting mistake. What does it actually print?', code:'for temp in [28, 30, 31]:\n    count = 0\n    count += 1\nprint(count)', answers:['1'], hint:'count = 0 runs inside the loop on every iteration.', explanation:'The counter resets to 0 each time and then increases to 1. Move count = 0 before the loop to count all three readings.', steps:['temp = 28 → reset to 0, then increment to 1','temp = 30 → reset to 0, then increment to 1','temp = 31 → reset to 0, then increment to 1','After the loop → prints 1'] },
+        { id:'a5', title:'Number the stations', prompt:'enumerate() supplies both a counter and an item. What prints?', code:'stations = ["LIT", "MEM"]\nfor number, station in enumerate(stations, start=1):\n    print(number, station)', answers:['1 LIT\n2 MEM'], hint:'start=1 makes the first counter 1. Each print uses a space between its arguments.', explanation:'enumerate pairs each station with a counter. start=1 changes the counter, not the positions of items in the list.', steps:['First pair: number = 1, station = LIT','Second pair: number = 2, station = MEM'] }
+      ]},
+      { id:'conditions', name:'Loops with if', reference:'An if statement inside a loop tests the current item. < means strictly less than; <= also includes the boundary value.', questions:[
+        { id:'c1', title:'Count freezing readings', prompt:'Count readings strictly below 32°F. What prints?', code:'freezing_hours = 0\nfor temp in [28, 35, 30, 32]:\n    if temp < 32:\n        freezing_hours += 1\nprint(freezing_hours)', answers:['2'], hint:'28 and 30 pass the test. Does 32 satisfy temp < 32?', explanation:'Only 28 and 30 are strictly below 32. The reading at exactly 32 does not pass this condition.', steps:['28 < 32 → count = 1','35 < 32 is false → count stays 1','30 < 32 → count = 2','32 < 32 is false → count stays 2'] },
+        { id:'c2', type:'blank', title:'Include the boundary', prompt:'Replace ____ with a condition that selects temperatures at or below 32°F. Use the variable temp.', code:'cold = []\nfor temp in [28, 32, 35]:\n    if ____:\n        cold.append(temp)\nprint(cold)', answers:['temp <= 32','32 >= temp'], hint:'Use the less-than-or-equal operator: <=.', explanation:'temp <= 32 includes both 28 and 32. The resulting list is [28, 32].', steps:['temp = 28 → include it','temp = 32 → include it','temp = 35 → skip it'] },
+        { id:'c3', title:'Skip a missing reading', prompt:'continue skips the rest of the current iteration. What prints?', code:'for temp in [28, -999, 35]:\n    if temp == -999:\n        continue\n    print(temp)', answers:['28\n35'], hint:'When temp is -999, Python jumps to the next item before reaching print().', explanation:'continue skips the missing-value marker. It does not end the entire loop.', steps:['temp = 28 → prints 28','temp = -999 → continue, no print','temp = 35 → prints 35'] },
+        { id:'c4', title:'Stop at the first match', prompt:'break ends the loop immediately. What prints?', code:'for temp in [35, 30, 28]:\n    if temp < 32:\n        print(temp)\n        break', answers:['30'], hint:'35 fails the condition. 30 passes it, then break runs.', explanation:'The first subfreezing reading is 30. After printing it, break exits the loop, so 28 is never checked.', steps:['temp = 35 → condition is false','temp = 30 → prints 30','break → loop ends before 28'] },
+        { id:'c5', title:'Two possible paths', prompt:'Each temperature takes one branch. Write all three printed lines.', code:'for temp in [30, 32, 35]:\n    if temp < 32:\n        print("cold")\n    else:\n        print("other")', answers:['cold\nother\nother'], hint:'The else branch runs whenever temp < 32 is false, including at exactly 32.', explanation:'30 takes the if branch. Both 32 and 35 take the else branch.', steps:['30 < 32 → prints cold','32 < 32 is false → prints other','35 < 32 is false → prints other'] }
+      ]},
+      { id:'nested', name:'Nested loops', reference:'For every outer-loop item, the inner loop runs all the way through again. Trace the inner loop fully before advancing the outer loop.', questions:[
+        { id:'n1', title:'Stations and hours', prompt:'The inner loop runs for each station. Write every printed line in order.', code:'for station in ["LIT", "MEM"]:\n    for hour in [0, 1]:\n        print(station, hour)', answers:['LIT 0\nLIT 1\nMEM 0\nMEM 1'], hint:'Keep station = LIT while hour takes both values. Then move to MEM.', explanation:'The outer loop picks a station; the inner loop visits every hour for that station.', steps:['LIT: hour 0 → LIT 0','LIT: hour 1 → LIT 1','MEM: hour 0 → MEM 0','MEM: hour 1 → MEM 1'] },
+        { id:'n2', title:'How many checks?', prompt:'Count the total number of times the innermost line runs.', code:'checks = 0\nfor station in range(3):\n    for hour in range(4):\n        checks += 1\nprint(checks)', answers:['12'], hint:'There are 3 outer iterations and 4 inner iterations for each one.', explanation:'The body runs 3 × 4 = 12 times. checks is initialized before both loops, so all increments accumulate.', steps:['station = 0 → 4 checks total','station = 1 → 8 checks total','station = 2 → 12 checks total'] },
+        { id:'n3', title:'Count each station separately', prompt:'Each inner list holds readings for one station. What prints?', code:'for readings in [[28, 35], [30, 31]]:\n    count = 0\n    for temp in readings:\n        if temp < 32:\n            count += 1\n    print(count)', answers:['1\n2'], hint:'The counter resets once per station, before its inner loop.', explanation:'The first station has one subfreezing reading; the second has two. The print is inside the outer loop but outside the inner loop.', steps:['First station: [28, 35] → count = 1 → prints 1','Second station: reset count to 0','Second station: [30, 31] → count = 2 → prints 2'] },
+        { id:'n4', title:'Break the inner loop', prompt:'A break only exits the loop directly containing it. What prints?', code:'for station in ["LIT", "MEM"]:\n    for hour in [0, 1, 2]:\n        print(station, hour)\n        break', answers:['LIT 0\nMEM 0'], hint:'The inner loop stops after hour 0, but the outer loop still moves to the next station.', explanation:'Each station starts a fresh inner loop. break ends that inner loop immediately after the first print.', steps:['station = LIT, hour = 0 → prints LIT 0, then breaks','Outer loop moves to MEM','station = MEM, hour = 0 → prints MEM 0, then breaks'] },
+        { id:'n5', title:'Read a tiny grid', prompt:'Treat the nested list as a 2 × 2 grid. What total prints?', code:'grid = [[1, 2], [3, 4]]\ntotal = 0\nfor row in grid:\n    for value in row:\n        total += value\nprint(total)', answers:['10'], hint:'Visit each row, then each value within that row. Keep one running total.', explanation:'The loops visit 1, 2, 3, and 4 in that order. The final sum is 10.', steps:['First row: add 1 → total = 1','First row: add 2 → total = 3','Second row: add 3 → total = 6','Second row: add 4 → total = 10'] }
+      ]}
+    ];
+
+    const allQuestions = modules.flatMap(module => module.questions);
+    const byId = new Map(allQuestions.map(question => [question.id, question]));
+    const storageKey = 'matthew-loop-lab-v1';
+    const $ = id => document.getElementById(id);
+    let storageAvailable = true;
+    let state = { solved:[], review:[], module:'loops', index:0 };
+    let currentIds = [];
+    let currentQuestion = null;
+    let questionAnswered = false;
+    let reviewSession = [];
+
+    // Stored data is optional. Practice still works if browser storage is blocked.
+    try {
+      const saved = JSON.parse(localStorage.getItem(storageKey));
+      if (saved && typeof saved === 'object') {
+        for (const key of ['solved','review']) {
+          if (Array.isArray(saved[key])) state[key] = [...new Set(saved[key].filter(id => byId.has(id)))];
+        }
+        if (modules.some(module => module.id === saved.module)) state.module = saved.module;
+        if (Number.isInteger(saved.index) && saved.index >= 0 && saved.index < 5) state.index = saved.index;
+      }
+    } catch (_) { storageAvailable = false; }
+
+    function save() {
+      try { localStorage.setItem(storageKey, JSON.stringify(state)); }
+      catch (_) { storageAvailable = false; }
+      $('saved-status').textContent = storageAvailable ? 'Progress saves on this browser.' : 'Progress lasts for this visit only.';
+    }
+
+    function escapeHTML(text) {
+      return text.replace(/[&<>"']/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));
+    }
+
+    function highlight(code) {
+      const token = /("[^"\n]*"|'[^'\n]*'|#[^\n]*|\b(?:for|in|if|else|break|continue)\b|\b\d+\b)/g;
+      let result = '', previous = 0;
+      for (const match of code.matchAll(token)) {
+        result += escapeHTML(code.slice(previous, match.index));
+        const text = match[0];
+        const kind = text.startsWith('#') ? 'comment' : /^["']/.test(text) ? 'str' : /^\d/.test(text) ? 'num' : 'kw';
+        result += '<span class="' + kind + '">' + escapeHTML(text) + '</span>';
+        previous = match.index + text.length;
+      }
+      return result + escapeHTML(code.slice(previous));
+    }
+
+    function normalize(text, type) {
+      const clean = text.replace(/\r\n?/g, '\n').trim();
+      // Blank exercises only accept specific expressions from the question data.
+      return type === 'blank' ? clean.replace(/\s+/g, '') : clean.split('\n').map(line => line.trim()).join('\n');
+    }
+
+    function updateNavigation() {
+      const options = [...modules.map((module,index) => ({id:module.id, label:module.name, number:String(index+1).padStart(2,'0'), ids:module.questions.map(q=>q.id)})), {id:'review',label:'Revisit questions',number:'↻',ids:state.review}];
+      $('modules').replaceChildren();
+      $('module-select').replaceChildren();
+      for (const option of options) {
+        const count = option.id === 'review' ? state.review.length + ' left' : option.ids.filter(id=>state.solved.includes(id)).length + ' / ' + option.ids.length;
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'module' + (state.module === option.id ? ' active' : '');
+        if (state.module === option.id) button.setAttribute('aria-current','page');
+        button.innerHTML = '<span class="module-number">' + option.number + '</span><span class="module-label">' + option.label + '</span><span class="module-count">' + count + '</span>';
+        button.addEventListener('click',()=>selectModule(option.id));
+        $('modules').append(button);
+        const selectOption = document.createElement('option');
+        selectOption.value = option.id;
+        selectOption.textContent = option.label + ' · ' + count;
+        $('module-select').append(selectOption);
+      }
+      $('module-select').value = state.module;
+      $('solved-count').textContent = state.solved.length + ' / ' + allQuestions.length;
+      $('review-count').textContent = state.review.length;
+    }
+
+    function selectModule(id) {
+      resetEmpty();
+      state.module = id;
+      if (id === 'review') reviewSession = [...state.review];
+      const ids = id === 'review' ? reviewSession : modules.find(module=>module.id===id).questions.map(q=>q.id);
+      const firstUnsolved = ids.findIndex(questionId=>!state.solved.includes(questionId));
+      state.index = id === 'review' ? 0 : Math.max(0,firstUnsolved);
+      render();
+    }
+
+    function render() {
+      const module = modules.find(item=>item.id===state.module);
+      currentIds = module ? module.questions.map(q=>q.id) : reviewSession;
+      state.index = Math.max(0,Math.min(state.index,currentIds.length-1));
+      currentQuestion = byId.get(currentIds[state.index]) || null;
+      questionAnswered = false;
+      updateNavigation();
+      $('exercise').hidden = !currentQuestion;
+      $('empty').hidden = Boolean(currentQuestion);
+      $('reference-title').textContent = module ? module.name + ' · Quick reference' : 'Practice the reasoning';
+      $('reference-text').textContent = module ? module.reference : 'Try the question again before opening the hint. A correct answer clears it from your review queue.';
+      if (!currentQuestion) { save(); return; }
+      const question = currentQuestion;
+      $('lesson').textContent = module ? String(modules.indexOf(module)+1).padStart(2,'0') + ' · ' + module.name : '↻ · Revisit questions';
+      $('position').textContent = 'Challenge ' + (state.index+1) + ' of ' + currentIds.length;
+      updateProgress();
+      $('question-kind').textContent = question.type === 'blank' ? 'Fill in the blank' : 'Predict the output';
+      $('question-title').textContent = question.title;
+      $('prompt').textContent = question.prompt;
+      $('code').innerHTML = highlight(question.code);
+      $('answer-label').textContent = question.type === 'blank' ? 'Enter the missing code' : 'What does this print?';
+      $('input-note').textContent = question.type === 'blank' ? 'Enter only the missing expression. Ctrl/⌘ + Enter checks your answer.' : 'Put each printed value on its own line. Ctrl/⌘ + Enter checks your answer.';
+      $('answer').value = '';
+      $('answer').placeholder = question.type === 'blank' ? 'Your Python expression…' : 'Type the printed output…';
+      $('answer').rows = question.type === 'blank' ? 2 : 3;
+      $('answer').disabled = false;
+      $('check').disabled = false;
+      $('check').textContent = 'Check answer';
+      $('hint-button').disabled = false;
+      $('hint-button').setAttribute('aria-expanded','false');
+      $('reveal-button').disabled = false;
+      $('hint').hidden = true;
+      $('hint').textContent = 'Hint: ' + question.hint;
+      $('feedback').hidden = true;
+      $('feedback').replaceChildren();
+      $('previous').disabled = state.index === 0;
+      $('next').textContent = state.index === currentIds.length-1 ? (state.module === 'review' ? 'Finish review →' : 'Finish module →') : 'Next →';
+      save();
+    }
+
+    function updateProgress() {
+      const solved = currentIds.filter(id=>state.solved.includes(id)).length;
+      $('module-progress').max = Math.max(1,currentIds.length);
+      $('module-progress').value = solved;
+      $('module-progress').setAttribute('aria-label', solved + ' of ' + currentIds.length + ' solved in this set');
+    }
+
+    function feedback(title, message, kind, solution) {
+      const box = $('feedback');
+      box.className = 'feedback ' + kind;
+      box.replaceChildren();
+      const heading = document.createElement('strong'); heading.textContent = title; box.append(heading);
+      const paragraph = document.createElement('p'); paragraph.textContent = message; box.append(paragraph);
+      if (solution) {
+        const result = document.createElement('pre'); result.textContent = currentQuestion.answers[0]; box.append(result);
+        const details = document.createElement('details');
+        const summary = document.createElement('summary'); summary.textContent = 'Walk through the loop'; details.append(summary);
+        const list = document.createElement('ol'); list.className = 'steps';
+        for (const step of currentQuestion.steps) { const item = document.createElement('li'); item.textContent = step; list.append(item); }
+        details.append(list); box.append(details);
+      }
+      box.hidden = false;
+    }
+
+    function addReview() {
+      if (!state.review.includes(currentQuestion.id)) state.review.push(currentQuestion.id);
+      updateNavigation(); save();
+    }
+
+    function lockQuestion() {
+      questionAnswered = true;
+      $('answer').disabled = true; $('check').disabled = true;
+      $('hint-button').disabled = true; $('reveal-button').disabled = true;
+    }
+
+    function checkAnswer(event) {
+      if (event) event.preventDefault();
+      if (!currentQuestion || questionAnswered) return;
+      const answer = normalize($('answer').value,currentQuestion.type);
+      if (!answer) { feedback('Give it a try.','Enter an answer, or use a hint to get started.','',false); $('answer').focus(); return; }
+      const correct = currentQuestion.answers.some(expected=>normalize(expected,currentQuestion.type)===answer);
+      if (correct) {
+        if (!state.solved.includes(currentQuestion.id)) state.solved.push(currentQuestion.id);
+        state.review = state.review.filter(id=>id!==currentQuestion.id);
+        lockQuestion(); updateNavigation(); updateProgress(); save();
+        feedback('You got it.',currentQuestion.explanation,'good',true);
+      } else {
+        addReview();
+        feedback('Try another pass.', 'Your answer does not match yet. ' + currentQuestion.hint + ' You can try again; this question is also saved for review.', 'wrong',false);
+      }
+    }
+
+    function finishSet() {
+      const isReview = state.module === 'review';
+      const moduleIndex = modules.findIndex(module=>module.id===state.module);
+      const solved = currentIds.filter(id=>state.solved.includes(id)).length;
+      $('exercise').hidden = true; $('empty').hidden = false;
+      $('empty-eyebrow').textContent = isReview ? 'Review session complete' : 'Module complete';
+      $('empty-title').textContent = solved + ' of ' + currentIds.length + ' solved.';
+      $('empty-message').textContent = (state.review.length ? state.review.length + ' question(s) remain in your review queue. ' : 'Your review queue is clear. ') + 'You can return to any module whenever you like.';
+      const button = $('back-to-loops');
+      button.textContent = isReview ? 'Back to for loops' : moduleIndex < modules.length-1 ? 'Start ' + modules[moduleIndex+1].name.toLowerCase() : 'Revisit questions';
+      button.onclick = () => { resetEmpty(); selectModule(isReview ? 'loops' : moduleIndex < modules.length-1 ? modules[moduleIndex+1].id : 'review'); };
+    }
+
+    function resetEmpty() {
+      $('empty-eyebrow').textContent = 'Review queue';
+      $('empty-title').textContent = 'Nothing to revisit yet.';
+      $('empty-message').textContent = 'Missed questions and revealed answers will appear here. Practice any module to get started.';
+      $('back-to-loops').textContent = 'Practice for loops';
+      $('back-to-loops').onclick = () => selectModule('loops');
+    }
+
+    $('answer-form').addEventListener('submit',checkAnswer);
+    $('answer').addEventListener('keydown',event=>{ if ((event.ctrlKey || event.metaKey) && event.key==='Enter') { event.preventDefault(); checkAnswer(); } });
+    $('module-select').addEventListener('change',event=>{ resetEmpty(); selectModule(event.target.value); });
+    $('hint-button').addEventListener('click',()=>{ const open = $('hint').hidden; $('hint').hidden = !open; $('hint-button').setAttribute('aria-expanded',String(open)); });
+    $('reveal-button').addEventListener('click',()=>{ if (!currentQuestion || questionAnswered) return; addReview(); lockQuestion(); feedback('Here is the answer.',currentQuestion.explanation + ' Try it again later from Revisit questions. Revealing an answer does not mark it solved.','',true); });
+    $('previous').addEventListener('click',()=>{ if (state.index>0) { state.index--; render(); } });
+    $('next').addEventListener('click',()=>{ if (state.index<currentIds.length-1) { state.index++; render(); } else finishSet(); });
+    $('reset-button').addEventListener('click',()=>{ $('reset-confirm').hidden = false; $('reset-button').setAttribute('aria-expanded','true'); $('cancel-reset').focus(); });
+    $('cancel-reset').addEventListener('click',()=>{ $('reset-confirm').hidden = true; $('reset-button').setAttribute('aria-expanded','false'); $('reset-button').focus(); });
+    $('confirm-reset').addEventListener('click',()=>{ state = {solved:[],review:[],module:'loops',index:0}; reviewSession=[]; $('reset-confirm').hidden=true; $('reset-button').setAttribute('aria-expanded','false'); resetEmpty(); render(); });
+    resetEmpty();
+    render();
+  </script>
+</body>
+</html>
